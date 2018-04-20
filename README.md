@@ -45,9 +45,6 @@ Quick start:
 
 `./ff4d.py <mount folder>`
 
-The accesstoken can optionally supplied via commandline. Normaly the plugin will ask you just one time
-and saves it to a configuration file.
-
 You can see all the mighty arguments by showing the help:
 
 `./ff4d.py -h`
