@@ -37,7 +37,7 @@ class Dropbox(Operations):
     self.ar = apiRequest
     self.cache = {}
     self.openfh = {}
-    self.runfh = {} 
+    self.runfh = {}
 
   #######################################
   # Wrapper functions around API calls. #
@@ -183,7 +183,7 @@ class Dropbox(Operations):
       else:
         cur_path=os.path.dirname(path)
         if cur_path in self.cache:
-          if 'entries' in self.cache[cur_path]: 
+          if 'entries' in self.cache[cur_path]:
             if debug == True: appLog('debug', 'Removing parent path from file in cache')
             self.cache.pop(os.path.dirname(path))
       if debug == True: appLog('debug', 'Removing from cache: ' + path)
@@ -298,7 +298,7 @@ class Dropbox(Operations):
     except Exception, e:
       appLog('error', 'Could not delete folder: ' + path, traceback.format_exc())
       raise FuseOSError(EIO)
-    if debug == True: appLog('debug', 'Successfully deleted folder: ' + path) 
+    if debug == True: appLog('debug', 'Successfully deleted folder: ' + path)
 
     # Remove outdated data from cache.
     self.removeFromCache(path)
@@ -356,7 +356,7 @@ class Dropbox(Operations):
           self.openfh[fh]['f'] = self.dbxFilehandle(path, offset)
         except Exception, e:
           appLog('error', 'Could not open remote file: ' + path, traceback.format_exc())
-          raise FuseOSError(EIO) 
+          raise FuseOSError(EIO)
       else:
         if debug == True: appLog('debug', 'FH handle for reading process already opened')
         if self.openfh[fh]['eoffset'] != offset:
@@ -386,17 +386,17 @@ class Dropbox(Operations):
     try:
       # Check for the beginning of the file.
       if fh in self.openfh:
-        if self.openfh[fh]['f'] == False: 
+        if self.openfh[fh]['f'] == False:
           if debug == True: appLog('debug', 'Uploading first chunk to Dropbox...')
           # Check if the write request exceeds the maximum buffer size.
-          if len(buf) >= write_cache or len(buf) < 4096: 
+          if len(buf) >= write_cache or len(buf) < 4096:
             if debug == True: appLog('debug', 'Cache exceeds configured write_cache. Uploading...')
             result = self.dbxChunkedUpload(buf, "", 0)
             self.openfh[fh]['f'] = {'upload_id':result['upload_id'], 'offset':result['offset'], 'buf':''}
           else:
             if debug == True: appLog('debug', 'Buffer does not exceed configured write_cache. Caching...')
             self.openfh[fh]['f'] = {'upload_id':'', 'offset':0, 'buf':buf}
-          return len(buf) 
+          return len(buf)
         else:
           if debug == True: appLog('debug', 'Uploading another chunk to Dropbox...')
           if len(buf)+len(self.openfh[fh]['f']['buf']) >= write_cache or len(buf) < 4096:
@@ -406,9 +406,9 @@ class Dropbox(Operations):
           else:
             if debug == True: appLog('debug', 'Buffer does not exceed configured write_cache. Caching...')
             self.openfh[fh]['f'].update({'buf':self.openfh[fh]['f']['buf']+buf})
-          return len(buf) 
+          return len(buf)
       else:
-        raise FuseOSError(EIO) 
+        raise FuseOSError(EIO)
     except Exception, e:
       appLog('error', 'Could not write to remote file: ' + path, traceback.format_exc())
       raise FuseOSError(EIO)
@@ -420,7 +420,7 @@ class Dropbox(Operations):
 
     # Validate flags.
     if flags & os.O_APPEND:
-      if debug == True: appLog('debug', 'O_APPEND mode not supported for open()') 
+      if debug == True: appLog('debug', 'O_APPEND mode not supported for open()')
       raise FuseOSError(EOPNOTSUPP)
 
     fh = self.getFH('r')
@@ -529,7 +529,7 @@ class Dropbox(Operations):
         st_nlink=2
       )
       if debug == True: appLog('debug', 'Returning properties for directory: ' + path + ' (' + str(properties) + ')')
-      return properties 
+      return properties
     elif item['.tag'] == 'file':
       properties = dict(
         st_mode=S_IFREG | 0644,
@@ -542,7 +542,7 @@ class Dropbox(Operations):
         st_nlink=1,
       )
       if debug == True: appLog('debug', 'Returning properties for file: ' + path + ' (' + str(properties) + ')')
-      return properties 
+      return properties
 
   # Flush filesystem cache. Always true in this case.
   def fsync(self, path, fdatasync, fh):
@@ -580,7 +580,7 @@ class apiRequest():
       # If retresp is TRUE return the raw response object.
       if retresp == True:
         return response
-      else: 
+      else:
         return json.loads(response.text)
     except httplib.HTTPException, e:
       appLog('error', 'apiRequest failed. HTTPException: ' + traceback.format_exc())
@@ -605,7 +605,7 @@ class apiRequest():
     if argheaders != None:
       headers.update(argheaders)
 
-    # Add body if defined. 
+    # Add body if defined.
     if args == None and body != None:
       if 'Content-Type' in headers and headers['Content-Type'] == 'application/octet-stream':
         args=body
@@ -655,7 +655,7 @@ class apiRequest():
 class apiAuth:
   def __init__(self):
     self.access_token = False
-    self.apiRequest = apiRequest() 
+    self.apiRequest = apiRequest()
     if debug == True: appLog('debug', 'Initialzed apiAuth')
 
   # Get code for polling.
@@ -703,14 +703,14 @@ class apiAuth:
 def appLog(mode, text, reason=""):
   msg = "[" + mode.upper() + "] " + text
   if reason != "":
-    msg = msg + " (" + reason + ")" 
+    msg = msg + " (" + reason + ")"
   print msg
 
 # Let the user authorize this application.
 def getAccessToken():
   dropbox_appkey = "fg7v60fm9f5ud7n"
   sandbox_appkey = "nstd2c6lbyj4z9b"
-  
+
   print ""
   print "Please choose which permission this application will request:"
   print "Enter 'd' - This application will have access to your whole"
@@ -720,7 +720,7 @@ def getAccessToken():
   print ""
   validinput = False
   while validinput == False:
-    perm = raw_input("Please enter permission key: ").strip() 
+    perm = raw_input("Please enter permission key: ").strip()
     if perm.lower() == 'd' or perm.lower() == 's':
       validinput = True
 
@@ -770,7 +770,7 @@ if __name__ == '__main__':
   print '********************************************************'
   print '* FUSE Filesystem 4 Dropbox                            *'
   print '*                                                      *'
-  print '* Copyright 2014                                       *'                  
+  print '* Copyright 2014                                       *'
   print '* Sascha Schmidt <sascha@schmidt.ps>                   *'
   print '*                                                      *'
   print '* https://github.com/realriot/ff4d/blob/master/LICENSE *'
@@ -782,7 +782,7 @@ if __name__ == '__main__':
   parser.add_argument('-dr', '--debug-raw', help='Show raw debug output', action='store_true', default=False)
   parser.add_argument('-df', '--debug-fuse', help='Show FUSE debug output', action='store_true', default=False)
 
-  # Mutual exclusion of arguments. 
+  # Mutual exclusion of arguments.
   atgroup = parser.add_mutually_exclusive_group()
   atgroup.add_argument('-ap', '--access-token-perm', help='Use this access token permanently (will be saved)', default=False)
   atgroup.add_argument('-at', '--access-token-temp', help='Use this access token only temporarily (will not be saved)', default=False)
@@ -792,7 +792,7 @@ if __name__ == '__main__':
   parser.add_argument('-ct', '--cache-time', help='Cache Dropbox data for X seconds (120 by default)', default=120, type=int)
   parser.add_argument('-wc', '--write-cache', help='Cache X bytes (chunk size) before uploading to Dropbox (4 MB by default)', default=4194304, type=int)
   parser.add_argument('-bg', '--background', help='Pushes FF4D into background', action='store_false', default=True)
-  
+
   parser.add_argument('mountpoint', help='Mount point for Dropbox source')
   args = parser.parse_args()
 
@@ -823,7 +823,7 @@ if __name__ == '__main__':
   try:
     scriptpath = os.path.dirname(sys.argv[0])
     f = open(scriptpath + '/ff4d.config', 'r')
-    access_token = f.readline()
+    access_token = f.readline().strip()
     if debug == True: appLog('debug', 'Got accesstoken from configuration file: ' + str(access_token))
   except Exception, e:
     pass
