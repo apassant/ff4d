@@ -17,12 +17,8 @@ Thanks in advance: [DONATE NOW VIA PAYPAL](https://www.paypal.com/cgi-bin/webscr
 
 There are some requirements which have to be fulfilled to make this plugin work.
 * [FUSE](http://fuse.sourceforge.net/) has to be installed. On Debian you can install FUSE with
- `apt-get install libfuse2`
-* Python pkg-resources must be installed.
-* Install [fusepy](https://github.com/fusepy/fusepy). On debian you can use `apt-get install python-fuse`, otherwise `pip install python-fuse`.
-* The user must have the permission to mount FUSE filesystems. On debian (before Jessie release) systems the user must belong to the group "fuse".
- adduser <user> fuse
-* Install dropbox module with for Python `pip install dropbox`
+ `apt-get install libfuse2`.
+* Install Python requirements: `pip install -r requirements.txt`.
 
 ### Compatible systems
 
@@ -38,7 +34,7 @@ Other systems may work...
 ### Authorize access
 
 Go to the [Dropbox developer home](https://www.dropbox.com/developers) and create a new app.
-Then generate an OAuth token and store in a `ff4d.config`.
+Then, generate an OAuth token and store in a `ff4d.config`, in the same folder than the `ff4d.py` script.
 
 **Please secure your access token. NOBODY may know it! This token allows full access
 to your configured dropbox space.**
